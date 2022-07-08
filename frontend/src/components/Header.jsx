@@ -24,9 +24,9 @@ const Header = () => {
       };
       const { data } = await axios.get(`/api/user/${user._id}`, config);
       setUserExist(true);
-      console.log(data)
+      // console.log(data)
       setsingUser({data});
-      console.log(userdata)
+       navigate('/userlist')
     } catch (error) {
       setUserExist(false)
     }
@@ -45,6 +45,9 @@ const Header = () => {
           <Nav className="justify-content-end" style={{ width: "100%" }}>
             {userexist && (
               <>
+               <Navbar.Text>
+                  Hello {userdata.data.name}
+               </Navbar.Text>
                 <Nav.Link
                   onClick={() => {
                     localStorage.removeItem("userdetail");
