@@ -22,7 +22,7 @@ const Header = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`/api/user/${user._id}`, config);
+      const { data } = await axios.get(`/api/user`, config);
       setUserExist(true);
       // console.log(data)
       setsingUser({data});

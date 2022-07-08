@@ -5,7 +5,14 @@ const generateToken = require('../utils/generateToken');
 const login=asynchandler(async(req,res)=>{
      const errors=validationResult(req);
      if(!errors.isEmpty()){
-        return res.status(400).json({errors:errors.array()})
+        let arr=[];
+        errors.array().map((ele)=>{
+              arr.push(ele.msg)
+        })
+        res.status(422);
+        throw new Error(arr);
+        // return res.status(400).json({errors:errors.array()})
+        
      }
      else{
         try {
@@ -31,8 +38,14 @@ const login=asynchandler(async(req,res)=>{
 })
 const register=asynchandler(async(req,res)=>{
     const errors=validationResult(req);
+    // console.log(errors)
      if(!errors.isEmpty()){
-        return res.status(400).json({errors:errors.array()})
+        let arr=[];
+        errors.array().map((ele)=>{
+              arr.push(ele.msg)
+        })
+        res.status(422);
+        throw new Error(arr);
      }
      else{
         let email=req.body.email;
@@ -62,7 +75,7 @@ const allUser=asynchandler(async(req,res)=>{
       }
 })
 const singleUser=asynchandler(async(req,res)=>{
-     const id=req.params.id;
+     const id=req.user.id;
      const user=await userModel.findById(id);
      res.status(200).json({
         _id:user._id,

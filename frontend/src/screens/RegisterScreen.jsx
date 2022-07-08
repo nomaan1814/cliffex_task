@@ -9,6 +9,7 @@ import Message from '../components/Message';
 import { Link, useNavigate } from 'react-router-dom';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
+import ErrAlert from '../components/ErrAlert';
 
 const RegisterScreen = () => {
    const initialValues={username:"",email:"",password:"",mobile:""};
@@ -16,6 +17,7 @@ const RegisterScreen = () => {
    const [formErrors,setFormErrors]=useState({});
    const [error,setError]=useState(null);
    const [loading,setLoading]=useState(false)
+   const [errArr,setErrArr]=useState([]);
     const navigate=useNavigate();
     const handleChange=(e)=>{
         const {name,value}=e.target;
@@ -58,7 +60,7 @@ const RegisterScreen = () => {
     const submitHandler=async(e)=>{
           e.preventDefault();
           setFormErrors(validate(formValues));
-          if(Object.keys(formErrors).length==0){
+          if(Object.keys(formErrors).length>0){
             try {
               const config={
                 headers:{
@@ -72,7 +74,12 @@ const RegisterScreen = () => {
               alert('Registered successfully')
               navigate('/login')
             } catch (error) {
-                 setError(error.response.data.message)
+              if(error.response.status==422){
+                setErrArr([error.response.data.message.split(',')])  
+           }
+           else{
+             setError(error.response.data.message)
+           }
                  setLoading(false)
             }
                
@@ -82,6 +89,7 @@ const RegisterScreen = () => {
   return (
     <MainScreen title='Sign Up'>
       {loading && <Loader />}
+      {errArr.length>0 && <ErrAlert error={errArr} />}
       {error && <Message variant='danger'>{error}</Message>}
     <Form onSubmit={submitHandler}>
     <Form.Group className="mb-3" controlId="formBasicEmail">

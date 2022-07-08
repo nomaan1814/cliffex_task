@@ -10,6 +10,7 @@ import Message from '../components/Message';
 import { Link, useNavigate } from 'react-router-dom';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
+import ErrAlert from '../components/ErrAlert';
 
 const LoginScreen = () => {
     const [email,setEmail]=useState("");
@@ -18,6 +19,7 @@ const LoginScreen = () => {
     const [pass_err,setPassErr]=useState({})
     const [loading,setLoading]=useState(false);
     const [error,setError]=useState(null);
+    const [errArr,setErrArr]=useState([]);
     const navigate=useNavigate();
     const validation=()=>{
         const email_err={}
@@ -39,19 +41,27 @@ const LoginScreen = () => {
           e.preventDefault();
           const isValid=validation();
           if(isValid){
-            try {
+            
               const config={
                 headers:{
                   "Content-type":"application/json"
               }
               }
+              
               setLoading(true)
-              const {data}=await axios.post('/api/user/login',{email,password},config)
+              try {
+              const {data}=await axios.post('/api/user/login',{email,password},config);
               localStorage.setItem("userdetail",JSON.stringify(data))
               setLoading(false)
               navigate('/userlist')
             } catch (error) {
-                 setError(error.response.data.message)
+              if(error.response.status==422){
+                   setErrArr([error.response.data.message.split(',')])
+                   
+              }
+              else{
+                setError(error.response.data.message)
+              }
                  setLoading(false)
             }
                
@@ -61,6 +71,7 @@ const LoginScreen = () => {
   return (
     <MainScreen title='Login'>
       {loading && <Loader />}
+      {errArr.length>0 && <ErrAlert error={errArr} />}
       {error && <Message variant='danger'>{error}</Message>}
     <Form onSubmit={submitHandler}>
     <Form.Group className="mb-3" controlId="formBasicEmail">

@@ -8,5 +8,5 @@ userRoute.post('/login',validate('login_user'),login);
 userRoute.post('/register',validate('register_user'),register);
 userRoute.use(authController);
 userRoute.get('/all',allUser);
-userRoute.get('/:id',singleUser);
+userRoute.get('/',singleUser);
 module.exports=userRoute;
