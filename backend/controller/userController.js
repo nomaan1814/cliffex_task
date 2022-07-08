@@ -11,7 +11,7 @@ const login=asynchandler(async(req,res)=>{
         try {
             const {email,password}=req.body;
             let user=await userModel.findOne({email});
-            if(user && (user.matchpassword(password))){
+            if(user && (await user.matchpassword(password))){
             res.status(200).json({
                   _id:user._id,
                   name:user.name,
@@ -37,10 +37,11 @@ const register=asynchandler(async(req,res)=>{
      else{
         let email=req.body.email;
         let existuser=await userModel.find({email});
-        if(existuser){
+        if(existuser==[]){
             res.status(400);
             throw new Error('User already exist');
         }
+        console.log(req.body)
         let user=await userModel.create(req.body);
         res.status(200).json({
              message:'User registered successfully'
@@ -60,4 +61,13 @@ const allUser=asynchandler(async(req,res)=>{
           })
       }
 })
-module.exports={login,register,allUser};
+const singleUser=asynchandler(async(req,res)=>{
+     const id=req.params.id;
+     const user=await userModel.findById(id);
+     res.status(200).json({
+        _id:user._id,
+        name:user.name,
+        email:user.email,
+        mobile:user.mobile,
+})})
+module.exports={login,register,allUser,singleUser};

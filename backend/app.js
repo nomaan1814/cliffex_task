@@ -5,7 +5,9 @@ dotenv.config({path:`${__dirname}/../.env`});
 const connectDb=require('./database/db');
 const userRoute = require('./route/userRouter');
 const errorHandler = require('./middlewares/erroHandler');
+const cors=require('cors')
 app.use(express.json())
+app.use(cors())
 connectDb();
 const port=process.env.PORT||5000;
 app.get('/',(req,res)=>{
