@@ -1,0 +1,11 @@
+const express=require('express');
+const userRoute=express.Router();
+const {body,validationResult,check}=require('express-validator');
+const authController = require('../controller/authController');
+const {login, register,allUser} = require('../controller/userController');
+const { validate } = require('../validation/userValidation');
+userRoute.post('/login',validate('login_user'),login);
+userRoute.post('/register',validate('register_user'),register);
+userRoute.use(authController);
+userRoute.get('/all',allUser);
+module.exports=userRoute;
